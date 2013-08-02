@@ -1,0 +1,43 @@
+CREATE TABLE  `PerlJams1`.`Song` (
+`SongId` CHAR( 36 ) BINARY NOT NULL ,
+`MbId` CHAR( 36 ) BINARY NULL ,
+`AlbumId` CHAR( 36 ) BINARY NOT NULL ,
+`Title` VARCHAR( 255 ) NOT NULL ,
+`TrackNum` INT( 5 ) NULL ,
+`BitRate` INT( 5 ) NULL ,
+`Bpm` INT( 5 ) NULL ,
+`URL` VARCHAR( 255 ) NOT NULL ,
+
+CREATE TABLE  `PerlJams1`.`Album` (
+`AlbumId` CHAR( 36 ) BINARY NOT NULL ,
+`MbId` CHAR( 36 ) BINARY NULL ,
+`ArtistId` CHAR( 36 ) BINARY NOT NULL ,
+`AlbumYear` DATE NOT NULL ,
+`TotalTracks` INT( 5 ) NOT NULL ,
+PRIMARY KEY (  `AlbumId` ) ,
+UNIQUE (
+`MbId` ,
+
+
+ALTER TABLE  `Album` CHANGE  `AlbumYear`  `AlbumYear` DATE NULL ,
+CHANGE  `TotalTracks`  `TotalTracks` INT( 5 ) NULL
+
+CREATE TABLE  `PerlJams1`.`Artist` (
+`ArtistId` CHAR( 36 ) BINARY NOT NULL ,
+`MbId` CHAR( 36 ) BINARY NULL ,
+`ArtistName` VARCHAR( 255 ) NOT NULL ,
+PRIMARY KEY (  `ArtistId` ) ,
+UNIQUE (
+`MbId`
+)
+) ENGINE = MYISAM ;
+
+ALTER TABLE  `Song` ADD  `FileType` VARCHAR( 255 ) NULL AFTER  `URL`
+
+ALTER TABLE  `Album` ADD  `ArtistName` VARCHAR( 255 ) NULL AFTER  `ArtistId`
+
+ALTER TABLE  `Album` CHANGE  `ArtistName`  `ArtistName` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL
+
+ALTER TABLE  `Album` ADD UNIQUE (
+`MbId`
+)
