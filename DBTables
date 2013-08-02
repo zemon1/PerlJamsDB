@@ -1,43 +1,98 @@
-CREATE TABLE  `PerlJams1`.`Song` (
-`SongId` CHAR( 36 ) BINARY NOT NULL ,
-`MbId` CHAR( 36 ) BINARY NULL ,
-`AlbumId` CHAR( 36 ) BINARY NOT NULL ,
-`Title` VARCHAR( 255 ) NOT NULL ,
-`TrackNum` INT( 5 ) NULL ,
-`BitRate` INT( 5 ) NULL ,
-`Bpm` INT( 5 ) NULL ,
-`URL` VARCHAR( 255 ) NOT NULL ,
+USE [MusicApp]
+GO
+/****** Object:  Table [dbo].[Album]    Script Date: 8/2/2013 4:10:46 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Album](
+	[AlbumId] [uniqueidentifier] NOT NULL,
+	[MbId] [varchar](50) NULL,
+	[AlbumName] [varchar](max) NOT NULL,
+	[ArtistId] [uniqueidentifier] NOT NULL,
+	[ArtistName] [varchar](max) NOT NULL,
+	[AlbumYear] [date] NULL,
+	[TotalTracks] [int] NULL,
+ CONSTRAINT [IX_Albums_AlbumId] UNIQUE NONCLUSTERED 
+(
+	[AlbumId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [IX_Albums_ArtistId] UNIQUE NONCLUSTERED 
+(
+	[ArtistId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [IX_Albums_MbId] UNIQUE NONCLUSTERED 
+(
+	[MbId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
-CREATE TABLE  `PerlJams1`.`Album` (
-`AlbumId` CHAR( 36 ) BINARY NOT NULL ,
-`MbId` CHAR( 36 ) BINARY NULL ,
-`ArtistId` CHAR( 36 ) BINARY NOT NULL ,
-`AlbumYear` DATE NOT NULL ,
-`TotalTracks` INT( 5 ) NOT NULL ,
-PRIMARY KEY (  `AlbumId` ) ,
-UNIQUE (
-`MbId` ,
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Artist]    Script Date: 8/2/2013 4:10:46 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Artist](
+	[ArtistId] [uniqueidentifier] NOT NULL,
+	[MbId] [varchar](50) NULL,
+	[ArtistName] [varchar](max) NOT NULL,
+ CONSTRAINT [IX_Artist_ArtistId] UNIQUE NONCLUSTERED 
+(
+	[ArtistId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [IX_Artist_mbId] UNIQUE NONCLUSTERED 
+(
+	[MbId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Song]    Script Date: 8/2/2013 4:10:46 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE TABLE [dbo].[Song](
+	[SongId] [uniqueidentifier] NOT NULL,
+	[MbId] [varchar](50) NULL,
+	[AlbumId] [uniqueidentifier] NOT NULL,
+	[Title] [varchar](max) NOT NULL,
+	[TrackNum] [int] NULL,
+	[BitRate] [int] NULL,
+	[Bpm] [int] NULL,
+	[URL] [varchar](max) NOT NULL,
+	[FileType] [varchar](max) NULL,
+ CONSTRAINT [IX_Songs_MbId] UNIQUE NONCLUSTERED 
+(
+	[MbId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [IX_Songs_SongId] UNIQUE NONCLUSTERED 
+(
+	[SongId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
-ALTER TABLE  `Album` CHANGE  `AlbumYear`  `AlbumYear` DATE NULL ,
-CHANGE  `TotalTracks`  `TotalTracks` INT( 5 ) NULL
-
-CREATE TABLE  `PerlJams1`.`Artist` (
-`ArtistId` CHAR( 36 ) BINARY NOT NULL ,
-`MbId` CHAR( 36 ) BINARY NULL ,
-`ArtistName` VARCHAR( 255 ) NOT NULL ,
-PRIMARY KEY (  `ArtistId` ) ,
-UNIQUE (
-`MbId`
-)
-) ENGINE = MYISAM ;
-
-ALTER TABLE  `Song` ADD  `FileType` VARCHAR( 255 ) NULL AFTER  `URL`
-
-ALTER TABLE  `Album` ADD  `ArtistName` VARCHAR( 255 ) NULL AFTER  `ArtistId`
-
-ALTER TABLE  `Album` CHANGE  `ArtistName`  `ArtistName` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL
-
-ALTER TABLE  `Album` ADD UNIQUE (
-`MbId`
-)
+GO
+SET ANSI_PADDING OFF
+GO
+ALTER TABLE [dbo].[Album]  WITH CHECK ADD  CONSTRAINT [FK_Albums_Artist] FOREIGN KEY([ArtistId])
+REFERENCES [dbo].[Artist] ([ArtistId])
+GO
+ALTER TABLE [dbo].[Album] CHECK CONSTRAINT [FK_Albums_Artist]
+GO
+ALTER TABLE [dbo].[Song]  WITH CHECK ADD  CONSTRAINT [FK_Song_AlbumId] FOREIGN KEY([AlbumId])
+REFERENCES [dbo].[Album] ([AlbumId])
+GO
+ALTER TABLE [dbo].[Song] CHECK CONSTRAINT [FK_Song_AlbumId]
+GO
