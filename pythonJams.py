@@ -33,9 +33,9 @@ def walker(root):
 
                     if count%10 == 0:
                         print count
-                        if count%25 == 0:
-                            saveHashMap(fileHash)
-                            print "Saved"
+                    if count%25 == 0:
+                        saveHashMap(fileHash)
+                        print "Saved"
     return fileHash
 
 def counter(root):
