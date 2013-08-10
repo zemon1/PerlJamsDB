@@ -1,15 +1,16 @@
-import MySQLdb, os, sys, urllib2, json, eyeD3
+import pymssql, os, sys, urllib2, json, eyeD3, hashlib
 import subprocess as sub
 
 def walker(root):
     
     fileHash = {}
     
+    count = 0 
     for (dirpath, dirnames, filenames) in os.walk(root):
             for filename in filenames:
                 path, extension = os.path.splitext(filename)
                 if extension == ".mp3":
-                    print filename
+                    #print filename
                     #print path
                     #print root
                     #print extension
@@ -23,12 +24,32 @@ def walker(root):
                              fingerPrintId = i.split(" ")[0]
                     try:
                         fingerPrintId = int(fingerPrintId)
-                        fileHash[thePath] = fingerPrintId
-                    
+                        fileHash[thePath] = [fingerPrintId, md5sum(thePath)]
+                        
+                        #print fingerPrintId
                     except Exception:
                         pass
-                    
+                    count = count + 1
+
+                    if count%10 == 0:
+                        print count
+                        if count%25 == 0:
+                            saveHashMap(fileHash)
+                            print "Saved"
     return fileHash
+
+def counter(root):
+    
+    fileHash = {}
+    
+    count = 0
+    for (dirpath, dirnames, filenames) in os.walk(root):
+            for filename in filenames:
+                path, extension = os.path.splitext(filename)
+                if extension == ".mp3":
+                    count = count + 1
+                    
+    print count
 
 
 def getInfo(hashMap):
@@ -117,43 +138,43 @@ def getInfo(hashMap):
     
     return [songs, albumHash]
 
-def databaseInserts(songs, artists, db):
-    cursor = db.cursor()
+def saveHashMap(hMap):
+     with open("hash.txt", "w") as outfile:
+         json.dump(hMap, outfile)
 
-    cursor.execute("""SELECT * FROM Artist""")
-    
-    print "DBI"
-    print cursor.fetchall()
-    cursor.close()
+def md5sum(filename):
+     f = open(filename, mode='rb')
+     d = hashlib.md5()
+     for buf in f.read(128):
+          d.update(buf)
+     
+     return d.hexdigest()
 
-
-    print "DBI"
-
+def connectDB():
+     conn = pymssql.connect(host='####', user='#####', password='#####', database='#####', as_dict=True)
 
 
 if __name__ == "__main__":
+    #path = "/media/audio/Music/Artists/Deadmau5/Full Circle/"
+    path = "/media/audio/Music"
     
-    hashMap = walker("/home/music/Music (V0)/Red Jumpsuit Apparatus/")
+    counter(path)
+
+    hashMap = walker(path)
+        
+    #saveHashMap(hashMap)
+
+    #connectDB()
+
+    #songs = getInfo(hashMap)
     
-    songs = getInfo(hashMap)
-    
-    for item in songs[0]:
-        print item
-    print "\n\n\n"
-    for key, value in songs[1].items():
-        print key, " - ", value
-
-    db=MySQLdb.connect("localhost","perljams","Mus1cDatabase","PerlJams1")
-    
-    databaseInserts(songs[0], songs[1], db)
-
-    cursor = db.cursor()
-
-    q = cursor.execute("""SELECT * FROM Artist""")
-
-    #q = db.query("""SELECT * FROM Artist""")
-    print cursor.fetchall()
-    cursor.close()
-
     #http://ws.audioscrobbler.com/2.0/?format=json&method=track.getfingerprintmetadata&fingerprintid=1234&api_key=b25b959554ed7...
-
+     
+     
+     
+     
+     
+     
+     
+     
+     
